@@ -1,5 +1,8 @@
 package one.digitalinnovation.avengers.domain.avenger
 
+import org.springframework.stereotype.Repository
+
+@Repository
 interface AvengerReository {
   fun getDetail(id: Long): Avenger
   fun getAvengers(): List<Avenger>

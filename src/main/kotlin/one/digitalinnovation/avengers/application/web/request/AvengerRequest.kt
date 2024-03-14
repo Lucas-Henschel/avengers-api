@@ -1,5 +1,6 @@
 package one.digitalinnovation.avengers.application.web.request
 
+import one.digitalinnovation.avengers.domain.avenger.Avenger
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
@@ -15,4 +16,6 @@ data class AvengerRequest(
   val person: String,
   val description: String? = "",
   val history: String? = "",
-)
+) {
+  fun toAvenger() = Avenger(nick, person, description, history)
+}

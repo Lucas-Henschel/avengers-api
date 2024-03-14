@@ -2,6 +2,8 @@ package one.digitalinnovation.avengers.application.web.resource
 
 import one.digitalinnovation.avengers.application.web.request.AvengerRequest
 import one.digitalinnovation.avengers.application.web.response.AvengerResponse
+import one.digitalinnovation.avengers.domain.avenger.AvengerReository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -9,19 +11,34 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 import javax.validation.Valid
 
+private const val API_PATH = "/v1/api/avenger";
+
 @RestController
-@RequestMapping(value = ["/v1/api/avenger"])
-class AvengerResource {
+@RequestMapping(value = [API_PATH])
+class AvengerResource(
+  @Autowired private val repository: AvengerReository
+) {
   @GetMapping
   fun getAvengers(): ResponseEntity<List<AvengerResponse>> =
-    ResponseEntity.ok().body(emptyList<AvengerResponse>())
+    repository.getAvengers()
+      .map { AvengerResponse.from(it) }
+      .let { ResponseEntity.ok().body(it) }
 
   @GetMapping(value = ["{id}"])
   fun getAvengerDetails(@PathVariable(value = "id") id: Long) =
-    ResponseEntity.ok().build<AvengerResponse>()
+    repository.getDetail(id)
+      .let { ResponseEntity.ok().body(AvengerResponse.from(it)) }
 
-  /*@PostMapping
-  fun createAvenget(@Valid @RequestBody request: AvengerRequest) =*/
+  @PostMapping
+  fun createAvenget(@Valid @RequestBody request: AvengerRequest) =
+    request.toAvenger().run {
+      repository.create(this)
+    }.let {
+      ResponseEntity
+        .created(URI("$API_PATH/${it.id}"))
+        .body(AvengerResponse.from(it))
+    }
 }
