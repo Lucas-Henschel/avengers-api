@@ -2,7 +2,7 @@ package one.digitalinnovation.avengers.application.web.resource
 
 import one.digitalinnovation.avengers.application.web.request.AvengerRequest
 import one.digitalinnovation.avengers.application.web.response.AvengerResponse
-import one.digitalinnovation.avengers.domain.avenger.AvengerReository
+import one.digitalinnovation.avengers.domain.avenger.AvengerRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -21,7 +21,7 @@ private const val API_PATH = "/v1/api/avenger";
 @RestController
 @RequestMapping(value = [API_PATH])
 class AvengerResource(
-  @Autowired private val repository: AvengerReository
+  @Autowired private val repository: AvengerRepository
 ) {
   @GetMapping
   fun getAvengers(): ResponseEntity<List<AvengerResponse>> =
